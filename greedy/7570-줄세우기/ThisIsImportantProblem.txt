@@ -1,3 +1,8 @@
 Visit LIS Problem
 
+
 https://www.acmicpc.net/problem/2631
+
+https://www.acmicpc.net/problem/11053
+
+https://github.com/hotehrud/acmicpc/tree/master/algorithm/lis
