@@ -1,54 +1,59 @@
 #include <iostream>
-#include <vector>
-#include <string>
+#include <queue>
+
 using namespace std;
 
-#define X first
-#define Y second
+int N;
+int M;
+int paint[502][502];
+int vis[502][502];
 
-int board[502][502];
-bool vis[502][502];
-int dx[4] = {0, 0, 1, -1};
-int dy[4] = {1, -1 ,0 , 0};
+int dr[4] = {1, -1, 0, 0};
+int dc[4] = {0, 0, 1, -1};
+
+int ans;
+int cnt;
+
+int bfs(int a, int b) {
+    queue<pair<int, int>> q;
+    q.push({a, b});
+    vis[a][b] = 1;
+    int s = 1;
+    while(!q.empty()) {
+        auto [r, c] = q.front(); q.pop();
+        for(int i = 0; i < 4; ++i) {
+            int nr = r + dr[i];
+            int nc = c + dc[i];
+            if(nr < 0 || nr >= N || nc < 0 || nc >= M) continue;
+            if(!paint[nr][nc]) continue;
+            if(vis[nr][nc]) continue;
+            vis[nr][nc] = 1;
+            s += 1;
+            q.push({nr, nc});
+        }
+    }
+    return s;
+}
 
 int main(void) {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    cin >> n >> m;
-
-    for(int i = 0; i < n; ++i) {
-        for(int j = 0; j < m; ++j) {
-            cin >> board[i][j];
+    cin >> N >> M;
+    for(int i = 0;i < N; ++i) {
+        for(int j = 0; j < M; ++j) {
+            cin >> paint[i][j];
         }
     }
 
-    int mx = 0;
-    int num = 0;
-    
-    for(int i = 0; i < n; ++i) {
-        for(int j = 0; j < m; ++j) {
-            if(board[i][j] == 0 || vis[i][j]) continue;
-            num++;
-            queue<pair<int, int>> Q;
-            vis[i][j] = 1;
-            Q.push({i, j});
-            int area = 0;
-            while(!Q.empty()) {
-                area++;
-                pair<int,int> cur = Q.front(); Q.pop();
-                for(int dir = 0; dir < 4; dir++) {
-                    int nx = cur.X + dx[dir];
-                    int ny = cur.Y + dy[dir];
-                    if(nx < 0 || nx >= n || ny < 0 || ny >= m) continue;
-                    if(vis[nx][ny] || board[nx][ny] != 1) continue;
-                    vis[nx][ny] = 1;
-                    Q.push({nx, ny});
-                }
-            }
-            mx = max(mx, area);
+    for(int i = 0; i < N; ++i) {
+        for(int j = 0; j < M; ++j) {
+            if(!paint[i][j]) continue;
+            if(vis[i][j]) continue;
+            ans = max(ans, bfs(i,j));
+            cnt += 1;
         }
     }
-    cout << num << mx;
+
+    cout << cnt << endl;
+    cout << ans << endl;
 
     return 0;
 }
