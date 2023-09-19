@@ -7,13 +7,11 @@ int N;
 int M;
 string table[102];
 int vis[102][102];
-int vis2[102][102];
 
 int dr[4] = {1, -1, 0, 0};
 int dc[4] = {0, 0, 1, -1};
 
-int bfs(int a, int b, char color) {
-    if(color == 'B') vis2[a][b] = 1;
+int bfs(int a, int b) {
     vis[a][b] = 1;
     queue<pair<int,int>> q;
     q.push({a, b});
@@ -24,9 +22,8 @@ int bfs(int a, int b, char color) {
             int nr = r + dr[i];
             int nc = c + dc[i];
             if(nr < 0 || nc < 0 || nr >= N || nc >= M) continue;
-            if(table[nr][nc] != color) continue;
+            if(table[nr][nc] != table[r][c]) continue;
             if(vis[nr][nc]) continue;
-            if(color == 'B') vis2[nr][nc] = 1;
             vis[nr][nc] = 1;
             q.push({nr, nc});
         }
@@ -47,33 +44,27 @@ int main(void) {
     for(int i = 0; i < N; ++i) {
         for(int j = 0; j < M; ++j) {
             if(vis[i][j]) continue;
-            if(table[i][j] == 'B') blue += bfs(i, j, 'B');
-            if(table[i][j] == 'R') red += bfs(i, j, 'R');
-            if(table[i][j] == 'G') green += bfs(i, j, 'G');
+            if(table[i][j] == 'B') blue += bfs(i, j);
+            if(table[i][j] == 'R') red += bfs(i, j);
+            if(table[i][j] == 'G') green += bfs(i, j);
+        }
+    }
+
+    for(int i = 0; i < N; ++i) {
+        fill(vis[i], vis[i]+102, 0);
+        for(int j = 0; j < M; ++j) {
+            if(table[i][j] == 'G') table[i][j] = 'R';
         }
     }
 
     int blind = 0;
     for(int i = 0; i < N; ++i) {
         for(int j = 0; j < M; ++j) {
-            if(vis2[i][j]) continue;
-            vis2[i][j] = 1;
-            blind += 1;
-            queue<pair<int,int>> q;
-            q.push({i, j});
-            while(!q.empty()) {
-                auto [r, c] = q.front(); q.pop();
-                for(int dir = 0; dir < 4; dir++) {
-                    int nr = r + dr[dir];
-                    int nc = c + dc[dir];
-                    if(nr < 0 || nc < 0 || nr >= N || nc >= M) continue;
-                    if(vis2[nr][nc]) continue;
-                    vis2[nr][nc] = 1;
-                    q.push({nr, nc});
-                }
-            }
+            if(vis[i][j]) continue;
+            blind += bfs(i, j);
         }
     }
-    cout << red+blue+green << " " << blue + blind;
+
+    cout << red+blue+green << " " << blind;
     return 0;   
 }
