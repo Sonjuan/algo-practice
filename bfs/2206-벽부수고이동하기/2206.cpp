@@ -1,41 +1,53 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <queue>
+#include <tuple>
 using namespace std;
 
-int board[1002][1002];
-int dist[1002][1002][2];
+int N;
+int M;
+string table[1005];
+int dist[1005][1005][2];
 
-int dx[4] = {0, 0, -1, 1};
-int dy[4] = {1, -1, 0, 0};
+int dr[4] = {0, 0, 1, -1};
+int dc[4] = {1, -1, 0, 0};
 
 int main(void) {
-    cin >> n >> m;
-    for(int i = 0; i < n; ++i) {
-        for(int j = 0; j < m; ++j) {
-            cin >> board[i][j];
-            dist[i][j][0] = dist[i][j][1] = -1;
+    cin >> N >> M;
+    for(int i = 0 ; i < N ;  ++i) cin >> table[i];
+    for(int i = 0; i < 1005; ++i) {
+        for(int j = 0; j < 1005; ++j) {
+            for(int k = 0; k < 2; ++k) {
+                dist[i][j][k] = -1;
+            }
         }
     }
-    dist[0][0][0] = dist[0][0][1] = 1;
-    queue<tuple<int, int, int>> q;
-    q.push({0, 0, 0});
+
+    queue<tuple<int,int,int>> q;
+    q.push({0,0,0});
+
+    dist[0][0][0] = 1;
+
     while(!q.empty()) {
-        int x, y, broken;
-        tie(x, y, broken) = q.front();
-        if(x == n-1 && y == m-1) return dist[x][y][broken];
-        q.pop();
-        for(int dir = 0; dir < 4; ++dir) {
-            int nx = x + dx[dir];
-            int ny = y + dy[dir];
-            if(x < 0 || x >= n || y < 0 || y >= m) continue;
-            if(board[nx][ny] == '0' && dist[nx][ny][broken] == -1) {
-                dist[nx][ny][broken] = dist[x][y][broken] + 1;
-                q.push({nx, ny, broken});
-            }
-            if(!broken && board[ny][nx] == '1' && dist[nx][ny][broken] == -1 ) {
-                dist[ny][nx][broken] = dist[x][y][broken] + 1;
-                q.push({nx, ny, 1});
-            }
-        }    
-    }
-    return -1;
+        auto [R,C,B] = q.front();q.pop();
+        if(R == N-1 && C == M-1) {
+            cout << dist[R][C][B] << '\n';
+            return 0;
+        }
+        for(int i = 0; i < 4; ++i) {
+            int nr = R + dr[i];
+            int nc = C + dc[i];
+            int nb = B;
+
+            if(nr < 0 || nc < 0 || nr >= N || nc >= M) continue;
+            if(table[nr][nc] == '1' && nb == 1) continue;
+            if(dist[nr][nc][nb] != -1) continue;
+
+            if(table[nr][nc] == '1') nb = 1;
+            dist[nr][nc][nb] = dist[R][C][B] + 1;
+            q.push({nr, nc, nb});
+        }
+    }   
+    cout << -1 << '\n';
+    return 0;
 }
