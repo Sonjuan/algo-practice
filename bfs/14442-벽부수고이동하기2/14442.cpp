@@ -1,38 +1,46 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <queue>
+#include <string>
+#include <tuple>
 using namespace std;
 
-int n, m, k;
-string board[1002];
+int N;
+int M;
+int K;
+
+int dr[4] = {1, -1, 0, 0};
+int dc[4] = {0, 0, -1, 1};
+
+string graph[1002];
 int dist[1002][1002][12];
-int dx[4] = {0, 0, 1, -1};
-int dy[4] = {1,-1, 0,  0};
 
 int main(void) {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-
-    cin >> n >> m >> k;
-    for(int i = 0; i < n; ++i) {
-        cin >> board[i];
+    cin >> N >> M >> K;
+    for(int i = 0; i < N; ++i) {
+        cin >> graph[i];
     }
-    queue<tuple<int, int, int>> q;
-    q.push({0, 0, 0});
+    queue<tuple<int,int,int>> q;
+    q.push({0,0,0});
     dist[0][0][0] = 1;
     while(!q.empty()) {
-        auto [x, y, w] = q.front(); q.pop();
-        if(x == n-1 && y == m-1) {
-            cout << dist[x][y][w] << '\n';
+        auto [R,C,B] = q.front();q.pop();
+        if(R == N-1 && C == M-1) {
+            cout << dist[R][C][B] << endl;
             return 0;
         }
         for(int dir = 0; dir < 4; ++dir) {
-            int nx = x + dx[dir], ny = y + dy[dir], nw = w;
-            if(nx < 0 || nx >= n || ny < 0 || ny >= m)  continue;
-            if(board[nx][ny] == '1') nw++;
-            if( nw > k || dist[nx][ny][nw] > 0) continue;
-            dist[nx][ny][nw] = dist[x][y][w] + 1;
-            q.push({nx, ny, nw});
+            int nr = R + dr[dir];
+            int nc = C + dc[dir];
+            int nb = B;
+            if(nr < 0 || nc < 0 || nr >= N || nc >= M) continue;
+            if(graph[nr][nc] == '1') nb += 1;
+            if(nb > K || dist[nr][nc][nb] > 0) continue;
+            dist[nr][nc][nb] = dist[R][C][B]+1;
+            q.push({nr,nc,nb});
+
         }
     }
     cout << -1;
+
     return 0;
 }
