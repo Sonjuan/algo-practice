@@ -33,19 +33,17 @@ int main(void) {
     }
     
     sort(edge.begin(), edge.end());
-    int longest = 0;
     int cnt = 0;
     int ans = 0;
     for(int i = 0; i < edge.size(); ++i) {
         auto [w, a, b] = edge[i];
+        if(cnt == N-2) break;
         if(!is_diff_group(a, b))  continue;
         cnt++;
         ans += w;
-        longest = max(longest, w);
-        if(cnt == N-1) break;
     }
 
-    cout << ans-longest;
+    cout << ans;
 
     return 0;
 }
